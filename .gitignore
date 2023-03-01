@@ -1,0 +1,22 @@
+__pycache__/
+*.py[cod]
+
+# Blacklist files/folders in same directory as the .gitignore file
+/*
+
+# Whitelist some files
+!.gitignore
+!README.md
+!requirements.txt
+!setup.py 
+
+<<<<<<< HEAD
+!spandimentotool/
+=======
+!spandimentotrain/
+!data/
+!docs/
+!draft/
+!presentations/
+!models/
+>>>>>>> edd04b3293d760a04f400c34300015c5bf11c265

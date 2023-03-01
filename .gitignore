@@ -6,6 +6,7 @@ __pycache__/
 
 # Whitelist some files
 !.gitignore
+!MANIFEST.in
 !README.md
 !requirements.txt
 !setup.py 

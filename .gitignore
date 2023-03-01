@@ -9,14 +9,4 @@ __pycache__/
 !README.md
 !requirements.txt
 !setup.py 
-
-<<<<<<< HEAD
 !spandimentotool/
-=======
-!spandimentotrain/
-!data/
-!docs/
-!draft/
-!presentations/
-!models/
->>>>>>> edd04b3293d760a04f400c34300015c5bf11c265

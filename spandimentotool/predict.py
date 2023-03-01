@@ -27,7 +27,6 @@ if vars(args)['input'] == '':
         example_answer = input('No input file or example file selected. Do you want to run an example? y/n\n')
         if example_answer == 'y':
             import os
-            print(os.getcwd())
             input_path = context.projectpath() / "data/example.parquet"
         elif example_answer == 'n':
             print('Bye!')
@@ -38,7 +37,6 @@ else:
 print('Input:', input_path)
 print('Output:', output_path)
 print('Code comune', code)
-print(context.projectpath())
 print('\n')
 # %% Process weather input
 processed_weather_forecasts = preprocess_weather(input_path, nlags=3, drop_spandimento=False)

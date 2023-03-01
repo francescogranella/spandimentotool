@@ -16,13 +16,13 @@ Download the package folder. This might take a few minutes.
 git clone https://github.com/francescogranella/spandimentotool
 ```
 
-Navigate to the directory, create a new environment and install the package:
+Create a new environment, navigate to the directory and install the package:
 
 ```
 conda create --name MYENV python=3.8
 conda activate MYENV
 cd <path-to-spandimentotool>
-pip install spandimentotool
+pip install .
 ```
 # Test
 

@@ -10,7 +10,7 @@ However, the dispersal of livestock effluents on fields is also responsible for 
 This tool is meant to support weekly bulletins on spreading effluents by forecasting PM 2.5 concentrations.
 
 # Installation 
-Download the package folder
+Download the package folder. This might take a few minutes.
 
 ```
 git clone https://github.com/francescogranella/spandimentotool
@@ -19,10 +19,10 @@ git clone https://github.com/francescogranella/spandimentotool
 Navigate to the directory, create a new environment and install the package:
 
 ```
-cd spandimentotool
 conda create --name MYENV python=3.8
 conda activate MYENV
-pip install .
+cd <path-to-spandimentotool>
+pip install spandimentotool
 ```
 # Test
 

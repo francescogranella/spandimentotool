@@ -30,12 +30,18 @@ pip install .
 spandimento
 ```
 # Usage
+Use the `municipalities` command if you wish save a list of municipalities and their code to a specified path.
 
 ```
-spandimento --input <path-to-weather-file.parquet> --code <code muncipality>
+municipalities --path <destination-path>
 ```
 
-Takes a `.parquet` file as input with the following structure
+With the ISTAT code of a municipality you can query the 10-day ahead forecast for PM 2.5:
+```
+spandimento --input <path-to-weather-file.parquet> --output <path-to-out-file.parquet> --code <code muncipality>
+```
+
+The command takes a `.parquet` file as input with the following structure
 
 |         | time                | lat | lon    | 10u        | 10v       | 2t      | tp         | lsm      |
 |---------|---------------------|-----|--------|------------|-----------|---------|------------|----------|
@@ -59,13 +65,14 @@ where
 + `tp` : Total precipitation (m)
 + `lsm`: Land-sea mask
 
+
 ## Output
 
 The command outputs a graph with two panels. On top are the predicted concentrations, along with reference lines at 20 and 15 $\mu g/m^3$. The bottom panel displays the total precipitation in mm forecasted by ECMWF. 
 
-<img src="img/example.png" style="zoom:67%;" />
+<img src="img/example.png" style="zoom:33%;" />
 
-The same information is save to disk in tabular form:
+The same information is saved to disk in tabular form:
 
 | date       | predicted PM2.5 | total precipitation |
 | ---------- | --------------- | ------------------- |
@@ -81,13 +88,27 @@ The same information is save to disk in tabular form:
 | 2019-12-31 | 47.62           | 0.0                 |
 
 # Methods and data
-`spandimentotool` is trained on weather forecast data by ECMWF over 2010-2022. For each municipality in Lombardia, a suite of estimators is trained and tested, and the best model is selected through the `pycaret` library. Models are evaluated on the rank-correlation of predictions.
+Chemical transport models used for forecasting concentrations of air pollutants are often complex and computationally intensive. `spandimentotool` is a fast statistical model that is intended to be user friendly. It builds on machine learning to forecast concentrations of PM 2.5 over municipalities in Lombardia. 
 
-## Performance
-<img src="img/rankcorr_hist.png" style="zoom:67%;" />
+Concentrations of PM 2.5 depend on highly non-linear interactions of its precursors and atmospheric conditions. Unfortunately, levels of emissions at a fine spatial and temporal resoltion are not available. `spandimentotool` is trained to predict PM 2.5 exploiting the dependence of concetrations on weather and predictable seasonal trends following [Granella et al. (2021)](https://iopscience.iop.org/article/10.1088/1748-9326/abd3d2). 
+
+For each municipality in Lombardia, a suite of estimators is trained and tested, and the best model is selected through the `pycaret` library. Models are evaluated on the rank-correlation of predictions, instead of on R2, because as the ultimate goal of this tool is to forecast the most suitable days for manure spreading in a given time window, rather than the predicting concentrations. The figure below shows the distribution of the rank-correlation of predicted and observed concentrations in heldout data (i.e. that has not been used in training). The median rank-correlation is above 0.7.
+
+<img src="img/rankcorr_hist.png" style="zoom:33%;" />
+
+Data for air pollution is collected, checked, and published by ARPA Lombardia, the regional environmental agency. We obtain readings for PM2.5 for background stations. Hourly readings are averaged to daily readings and interpolated with inverse-distance weighting to a 0.1°x0.1° grid (approximately 10x10 km).
+
+Input weather data is daily 10-day ahead weather forecasts by ECMWF over 2016-2022. The data is in a 0.1°x0.1° grid (approximately 10x10 km) covering the region of Lombardia. Although ECMWF produces forecasts for a wide range of aatmospheric conditions, in the interest of computational speed we restrict the input variables to 10-meter U and V wind components in meter/second, 2-meter temperature in Kelvin, and total precipitation in meters.
+
+To capture seasonal trends in emissions (e.g. turning on and off of residential heating), we include calendar variables as additional predictors. More specifically, week of the year and day of the week are added in the form of continuous variables as tree-based algorithms can well discretize continuous variables.
+
+Finally, we exclude from the training set all days in which dispersal of manure on agricultural fields was allowed. 
 
 # Acknowledgements
 
-`spandimentotool` was created by Francesco Granella and Lara Aleluia Reis under the [Impact on humaN Health of Agriculture and Liestock Emissions](https://www.eiee.org/project/inhale/) (INHALE) project funded by [Fondazione Cariplo](https://www.fondazionecariplo.it/it/index.html).  We are grateful to Stefania Renna, Jacopo Lunghi, Maurizio Malpede for useful ineractions. Damiano Di Simine and Legambiente provided insightful comments. We thank Rita Lecci (CMCC) for providing us with ECMWF data.
+`spandimentotool` was created by Francesco Granella and Lara Aleluia Reis under the [Impact on humaN Health of Agriculture and Livestock Emissions](https://www.eiee.org/project/inhale/) (INHALE) project funded by [Fondazione Cariplo](https://www.fondazionecariplo.it/it/index.html).  We are grateful to Stefania Renna, Jacopo Lunghi, Maurizio Malpede for useful interactions. Damiano Di Simine and Legambiente provided insightful comments. We thank Rita Lecci (CMCC) for providing us with ECMWF data and Laurent Drouet for helping with packaging the code.
 
 Queries should be addressed to francesco.granella@eiee.org.
+
+# References
+Francesco Granella et al 2021 Environ. Res. Lett. 16 035012

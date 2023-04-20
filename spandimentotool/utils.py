@@ -53,6 +53,15 @@ def get_name_comune(codcom):
     return comuni.loc[comuni['PRO_COM_T'].astype(int)==codcom, 'COMUNE'].values[0]
 
 
+def save_municipalities(path='municipalities.csv'):
+    borders_comuni_path = context.projectpath() / 'data/borders/Limiti01012022_g/Com01012022_g/Com01012022_g_WGS84.shp'
+    gdf = gpd.read_file(borders_comuni_path)
+    gdf[['COMUNE', 'PRO_COM']]\
+        .rename(columns={'COMUNE':'name', 'PRO_COM': 'code'})\
+        .to_csv(path, index=False)
+    print(f'List of municipalities saved to {borders_comuni_path}')
+
+
 def get_popgrid_ita():
     grid_ita_path = context.projectpath() / 'data/grid_ita.parquet'
     grid_ita = gpd.read_parquet(grid_ita_path)

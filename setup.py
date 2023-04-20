@@ -14,5 +14,5 @@ setup(
         'matplotlib', 'pandas', 'numpy', 'xarray', 'tabulate', 'pycaret', 'geopandas'
     ],
     entry_points = {
-        'console_scripts': ['spandimento=spandimentotool.CLI:main', 'prova=spandimentotool.CLI:prova'],
+        'console_scripts': ['spandimento=spandimentotool.CLI:main', 'municipalities=spandimentotool.CLI:municipalities'],
     })

@@ -73,7 +73,7 @@ ax1.spines[['top', 'right']].set_visible(False)
 ax1.grid(False)
 ax1.set_ylabel('PM$_{2.5}$, $\mu g/m^3$', fontsize=9)
 custom_lines = [Line2D([0], [0], color='red', lw=4, label='Proposed EU standards'), Line2D([0], [0], color='salmon', lw=4, label='Suggested WHO standards')]
-ax1.legend(handles=custom_lines, loc='center', frameon=False)
+ax1.legend(handles=custom_lines, frameon=False)
 ax2.bar(g.date, g.tp_l0, color='deepskyblue', zorder=0)
 ax2.set_ylabel('Precipitation, mm', color='deepskyblue', fontsize=9)
 ax2.spines[['top', 'right']].set_visible(False)

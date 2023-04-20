@@ -22,7 +22,7 @@ Create a new environment, navigate to the directory and install the package:
 conda create --name MYENV python=3.8
 conda activate MYENV
 cd <path-to-spandimentotool>
-pip install .
+pip install . -r requirements.txt
 ```
 # Test
 

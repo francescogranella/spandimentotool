@@ -11,7 +11,7 @@ setup(
     author_email='',
     description='',
     install_requires=[
-        'matplotlib', 'pandas', 'numpy', 'xarray', 'tabulate', 'pycaret', 'geopandas'
+        'matplotlib', 'pandas', 'numpy', 'xarray', 'tabulate', 'pycaret', 'geopandas', 'pyarrow'
     ],
     entry_points = {
         'console_scripts': ['spandimento=spandimentotool.CLI:main', 'prova=spandimentotool.CLI:prova'],

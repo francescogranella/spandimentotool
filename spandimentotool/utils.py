@@ -59,7 +59,7 @@ def save_municipalities(path='municipalities.csv'):
     gdf[['COMUNE', 'PRO_COM']]\
         .rename(columns={'COMUNE':'name', 'PRO_COM': 'code'})\
         .to_csv(path, index=False)
-    print(f'List of municipalities saved to {borders_comuni_path}')
+    print(f'List of municipalities saved to {path}')
 
 
 def get_popgrid_ita():
@@ -148,9 +148,25 @@ def get_grid_areas():
 #     return df
 
 
+def _read_nc(path):
+    import xarray as xr
+    miny = 44.6
+    maxy = 46.7
+    minx = 8.4
+    maxx = 11.5
+    lon_bnds, lat_bnds = (minx, maxx), (maxy, miny)
+    ds = xr.open_dataset(path)
+    ds = ds.sel(lon=slice(*lon_bnds), lat=slice(*lat_bnds))[['V10M', 'U10M', 'T2M', 'precip', 'LSM']]
+    return ds.to_dataframe().reset_index().rename(
+        columns={'V10M': '10u', 'U10M': '10v', 'T2M': '2t', 'precip': 'tp', 'LSM': 'lsm'})
+
+
 def preprocess_weather(path, nlags=0, drop_spandimento=True):
     # Weather: open, create wind dir+speed, subset
-    weather = pd.read_parquet(path)
+    try:
+        weather = pd.read_parquet(path)
+    except:
+        weather = _read_nc(path)
     weather = weather[weather.lsm > 0.75]
     minx, maxx, miny, maxy = get_bounds()
     weather = weather[(weather.lon.between(minx, maxx)) & (weather.lat.between(miny, maxy))]
@@ -171,7 +187,7 @@ def preprocess_weather(path, nlags=0, drop_spandimento=True):
     weather.drop(columns=['10u', '10v', 'wspeed', 'wdir'], inplace=True)
     for col in weather.columns:
         if col not in ['time', 'lat', 'lon']:
-            weather[col] = weather[col].round(2)
+            weather[col] = weather[col].round(5)
 
     # weather = weather.pivot(index=['time'], columns=['lat', 'lon'])
     # weather.columns = ['_'.join([str(c) for c in x]) for x in weather   .columns]

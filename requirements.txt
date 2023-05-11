@@ -10,3 +10,4 @@ pyarrow>=10.0.1
 scikit-learn==0.23.2
 netCDF4>=1.6.0
 xarray==2023.1.0
+netcdf4==1.6.3

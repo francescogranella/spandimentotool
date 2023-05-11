@@ -14,3 +14,4 @@ __pycache__/
 !img/
 spandimentotool/models/config_Lombardia_nospand
 spandimentotool/models/model_Lombardia_nospand.pkl
+spandimentotool/output.csv

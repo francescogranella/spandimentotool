@@ -35,9 +35,10 @@ def get_borders_comuni():
     else:
         pass
     comuni = gpd.read_file(borders_comuni_path)
-    aree = get_aree_spandimento()
-    comuni = pd.merge(comuni[['PRO_COM', 'geometry']].rename(columns={'PRO_COM': 'codcom'}), aree, on=['codcom'],
-                      how='inner')
+    comuni = comuni[comuni.COD_REG == 3].rename(columns={'PRO_COM': 'codcom'})
+    # aree = get_aree_spandimento()
+    # comuni = pd.merge(comuni[['PRO_COM', 'geometry']].rename(columns={'PRO_COM': 'codcom'}), aree, on=['codcom'],
+    #                   how='inner')
     return comuni.to_crs('EPSG:4326')
 
 
@@ -56,6 +57,7 @@ def get_name_comune(codcom):
 def save_municipalities(path='municipalities.csv'):
     borders_comuni_path = context.projectpath() / 'data/borders/Limiti01012022_g/Com01012022_g/Com01012022_g_WGS84.shp'
     gdf = gpd.read_file(borders_comuni_path)
+    gdf = gdf[gdf.COD_REG == 3]
     gdf[['COMUNE', 'PRO_COM']]\
         .rename(columns={'COMUNE':'name', 'PRO_COM': 'code'})\
         .to_csv(path, index=False)

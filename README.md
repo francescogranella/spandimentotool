@@ -10,11 +10,7 @@ However, the dispersal of livestock effluents on fields is also responsible for 
 This tool is meant to support weekly bulletins on spreading effluents by forecasting PM 2.5 concentrations.
 
 # Installation 
-Download the package folder. This might take a few minutes.
-
-```
-git clone https://github.com/francescogranella/spandimentotool
-```
+Download the package folder, for instance with `git clone https://github.com/francescogranella/spandimentotool`. This might take a few minutes.
 
 Create a new environment, navigate to the directory and install the package:
 
@@ -22,9 +18,10 @@ Create a new environment, navigate to the directory and install the package:
 conda create --name MYENV python=3.8
 conda activate MYENV
 cd <path-to-spandimentotool>
-pip install . -r requirements.txt
+conda install --file requirements.txt
 ```
 # Test
+You can test the correct installation of the package running an example with the command:
 
 ```
 spandimento
@@ -38,54 +35,42 @@ municipalities --path <destination-path>
 
 With the ISTAT code of a municipality you can query the 10-day ahead forecast for PM 2.5:
 ```
-spandimento --input <path-to-weather-file.parquet> --output <path-to-out-file.parquet> --code <code muncipality>
+spandimento --input <path-to-weather-file.nc> --output <path-to-out-file.csv> --code <code muncipality>
 ```
 
-The command takes a `.parquet` file as input with the following structure
+The input file should be daily 10-day ahead weather forecasts by the [European Centre for Medium-Range Weather Forecasts (ECMWF)](https://www.ecmwf.int/en/forecasts) 
+on a 0.1°x0.1° grid (approximately 10x10 km) covering at least the region of Lombardia and containing the following variables:
 
-|         | time                | lat | lon    | 10u        | 10v       | 2t      | tp         | lsm      |
-|---------|---------------------|-----|--------|------------|-----------|---------|------------|----------|
-| 838200  | 2019-12-21 00:00:00 | 47  | 8      | -0.0594053 | 0.824483  | 274.313 | 0.00742865 | 1        |
-| 838201  | 2019-12-21 00:00:00 | 47  | 8.125  | 0.148114   | 0.886983  | 274.669 | 0.00793029 | 0.998291 |
-| 838202  | 2019-12-21 00:00:00 | 47  | 8.25   | 0.160077   | 0.861348  | 276.303 | 0.00888396 | 0.877869 |
-| 838203  | 2019-12-21 00:00:00 | 47  | 8.375  | -0.180743  | 0.585958  | 278.157 | 0.0101161  | 0.70636  |
-| 838204  | 2019-12-21 00:00:00 | 47  | 8.5    | -0.833331  | -0.079814 | 277.771 | 0.0116363  | 0.667175 |
-| ...     | ...                 | ... | ...    | ...        | ...       | ...     | ...        | ...      |
-| 9721795 | 2019-12-27 18:00:00 |    44 | 11.5   | -1.13599  | -1.11962   | 275.62  | 0.000357628 |     1 |
-| 9721796 | 2019-12-27 18:00:00 |    44 | 11.625 | -0.776006 | -0.552238  | 276.015 | 0.000109673 |     1 |
-| 9721797 | 2019-12-27 18:00:00 |    44 | 11.75  |  0.812129 | -0.0961838 | 276.078 | 1.04904e-05 |     1 |
-| 9721798 | 2019-12-27 18:00:00 |    44 | 11.875 |  0.745845 |  0.378914  | 276.079 | 5.14984e-05 |     1 |
-| 9721799 | 2019-12-27 18:00:00 |    44 | 12     |  0.829707 |  0.740974  | 276.794 | 8.29697e-05 |     1 |
-
-
-where 
-+ `10u` : 10 metre U wind component  (m/s)
-+ `10v` : 10 metre V wind component (m/s)
-+ `2t` : 2 metre temperature (K) 
-+ `tp` : Total precipitation (m)
-+ `lsm`: Land-sea mask
++ `U10M` : 10 metre U wind component  (m/s)
++ `V10M` : 10 metre V wind component (m/s)
++ `T2M` : 2 metre temperature (K) 
++ `precip` : Total precipitation (m)
++ `LSM`: Land-sea mask
 
 
 ## Output
 
-The command outputs a graph with two panels. On top are the predicted concentrations, along with reference lines at 20 and 15 $\mu g/m^3$. The bottom panel displays the total precipitation in mm forecasted by ECMWF. 
+The command outputs an image with two panels and a table. On top are the predicted concentrations, along with reference lines for the proposed EU air quality standards and for the WHO standards.
+The bottom panel displays the total precipitation in mm forecasted by ECMWF. 
+The table ranks the days over the forecast window for suitability for manure spreading. 
+Best ranked are the days with low predicted pollution. However, days with forecasted rain are ranked last, in line with the current legislation on manure spreading. 
 
-<img src="img/example.png" style="zoom:33%;" />
+<img src="img/example.png" style="zoom:50%;" />
 
 The same information is saved to disk in tabular form:
 
-| date       | predicted PM2.5 | total precipitation |
-| ---------- | --------------- | ------------------- |
-| 2019-12-22 | 13.52           | 0.24                |
-| 2019-12-23 | 10.64           | 0.0                 |
-| 2019-12-24 | 16.41           | 0.0                 |
-| 2019-12-25 | 18.28           | 0.0                 |
-| 2019-12-26 | 34.33           | 0.0                 |
-| 2019-12-27 | 41.79           | 0.0                 |
-| 2019-12-28 | 49.8            | 0.0                 |
-| 2019-12-29 | 49.63           | 0.0                 |
-| 2019-12-30 | 45.57           | 0.0                 |
-| 2019-12-31 | 47.62           | 0.0                 |
+| date                |   predicted PM2.5 |   total precipitation |
+|:--------------------|------------------:|----------------------:|
+| 2022-02-08 00:00:00 |             14.03 |                  0    |
+| 2022-02-09 00:00:00 |             33.73 |                  0    |
+| 2022-02-10 00:00:00 |             41.06 |                  0    |
+| 2022-02-11 00:00:00 |             46.85 |                  0.01 |
+| 2022-02-12 00:00:00 |             35.88 |                  0.02 |
+| 2022-02-13 00:00:00 |             26.54 |                  0    |
+| 2022-02-14 00:00:00 |             40.74 |                  0    |
+| 2022-02-15 00:00:00 |             33.96 |                  0.02 |
+| 2022-02-16 00:00:00 |             36.61 |                  0    |
+| 2022-02-17 00:00:00 |             24.02 |                  0    |
 
 # Methods and data
 Chemical transport models used for forecasting concentrations of air pollutants are often complex and computationally intensive. `spandimentotool` is a fast statistical model that is intended to be user friendly. It builds on machine learning to forecast concentrations of PM 2.5 over municipalities in Lombardia. 
@@ -98,7 +83,7 @@ For each municipality in Lombardia, a suite of estimators is trained and tested,
 
 Data for air pollution is collected, checked, and published by ARPA Lombardia, the regional environmental agency. We obtain readings for PM2.5 for background stations. Hourly readings are averaged to daily readings and interpolated with inverse-distance weighting to a 0.1°x0.1° grid (approximately 10x10 km).
 
-Input weather data is daily 10-day ahead weather forecasts by ECMWF over 2016-2022. The data is in a 0.1°x0.1° grid (approximately 10x10 km) covering the region of Lombardia. Although ECMWF produces forecasts for a wide range of aatmospheric conditions, in the interest of computational speed we restrict the input variables to 10-meter U and V wind components in meter/second, 2-meter temperature in Kelvin, and total precipitation in meters.
+Input weather data is daily 10-day ahead weather forecasts by ECMWF over 2016-2022. The data is in a 0.1°x0.1° grid (approximately 10x10 km) covering the region of Lombardia. Although ECMWF produces forecasts for a wide range of atmospheric conditions, in the interest of computational speed we restrict the input variables to 10-meter U and V wind components in meter/second, 2-meter temperature in Kelvin, and total precipitation in meters.
 
 To capture seasonal trends in emissions (e.g. turning on and off of residential heating), we include calendar variables as additional predictors. More specifically, week of the year and day of the week are added in the form of continuous variables as tree-based algorithms can well discretize continuous variables.
 
@@ -111,4 +96,4 @@ Finally, we exclude from the training set all days in which dispersal of manure 
 Queries should be addressed to francesco.granella@eiee.org.
 
 # References
-Francesco Granella et al 2021 Environ. Res. Lett. 16 035012
+Granella, F., Reis, L. A., Bosetti, V., & Tavoni, M. (2021). COVID-19 lockdown only partially alleviates health impacts of air pollution in Northern Italy. Environmental Research Letters, 16(3), 035012.

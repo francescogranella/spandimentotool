@@ -12,3 +12,5 @@ __pycache__/
 !setup.py 
 !spandimentotool/
 !img/
+spandimentotool/models/config_Lombardia_nospand
+spandimentotool/models/model_Lombardia_nospand.pkl
